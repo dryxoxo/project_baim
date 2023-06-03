@@ -8,10 +8,16 @@ import { VehicleYearsModule } from './vehicle-years/vehicle-years.module';
 import { VehicleModule } from './vehicle/vehicle.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
+import { MiddlewareConsumer } from '@nestjs/common';
+import { JwtMiddleware } from './middleware/JwtMiddleware.middleware';
 
 @Module({
   imports: [TypeOrmModule.forRoot(typeOrmConfig), UsersModule, PricelistsModule, VehicleBrandsModule, VehicleModelsModule, VehicleTypesModule, VehicleYearsModule, VehicleModule],
   controllers: [],
-  providers: [],
+  providers: [JwtMiddleware],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(JwtMiddleware).forRoutes('create-vehicle');
+  }
+}
