@@ -6,9 +6,11 @@ import { VehicleModelsModule } from './vehicle-models/vehicle-models.module';
 import { VehicleTypesModule } from './vehicle-types/vehicle-types.module';
 import { VehicleYearsModule } from './vehicle-years/vehicle-years.module';
 import { VehicleModule } from './vehicle/vehicle.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeOrmConfig } from './config/typeorm.config';
 
 @Module({
-  imports: [UsersModule, PricelistsModule, VehicleBrandsModule, VehicleModelsModule, VehicleTypesModule, VehicleYearsModule, VehicleModule],
+  imports: [TypeOrmModule.forRoot(typeOrmConfig), UsersModule, PricelistsModule, VehicleBrandsModule, VehicleModelsModule, VehicleTypesModule, VehicleYearsModule, VehicleModule],
   controllers: [],
   providers: [],
 })
