@@ -52,4 +52,53 @@ export class VehicleModelsService {
           throw new InternalServerErrorException(error.message);
         }
       }
+
+      async deleteVehicleModel(id_model: string, req: Request): Promise<any> {
+        try {
+          if (req['user'].role !== true) {
+            throw new UnauthorizedException('Only admin can delete vehicle model');
+          }
+          const vehicleModel = await this.vehicleModelsRepository.findOne({
+            where: { id_model },
+          });
+          if (!vehicleModel) {
+            throw new NotFoundException('Vehicle model not found');
+          }
+          await this.vehicleModelsRepository.delete(id_model);
+          return {
+            message: 'Vehicle model deleted successfully',
+          };
+        } catch (error) {
+          throw new InternalServerErrorException(error.message);
+        }
+      }
+
+      async createVehicleModel(name: string, id_type: string, req: any): Promise<any> {
+        try {
+          if (req['user'].role !== true) {
+            throw new UnauthorizedException('Only admin can create vehicle model');
+          }
+          const vehicleModel = await this.vehicleModelsRepository.findOne({
+            where: { name },
+          });
+          if (vehicleModel) {
+            throw new ConflictException('Vehicle model already exists');
+          }
+          const vehicleType = await this.vehicleTypesRepository.findOne({
+            where: { id_type },
+          });
+          if (!vehicleType) {
+            throw new NotFoundException('Vehicle type not found');
+          }
+
+          const newVehicleModel = this.vehicleModelsRepository.create({
+            name,
+            id_type: vehicleType,
+          });
+
+          return this.vehicleModelsRepository.save(newVehicleModel);
+        } catch (error) {
+          throw new InternalServerErrorException(error.message);
+        }
+      }
 }
