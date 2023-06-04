@@ -53,4 +53,51 @@ export class VehicleTypesService {
       throw new InternalServerErrorException(error.message);
     }
   }
+
+  async create(name: string, id_brand: string, req: any): Promise<vehicle_types> {
+    try {
+      if (req['user'].role !== true) {
+        throw new UnauthorizedException('Only admin can create vehicle type');
+      }
+
+      const brand = await this.vehicleBrandsRepository.findOne({ where: { id_brand: id_brand } });
+      if (!brand) {
+        throw new NotFoundException(`Brand with id ${id_brand} not found`);
+      }
+
+      const vehicleType = this.vehicleTypesRepository.create({
+        name,
+        id_brand: brand,
+      });
+      return this.vehicleTypesRepository.save(vehicleType);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async delete(id_type: string, req: Request): Promise<any> {
+    try {
+      if (req['user'].role !== true) {
+        throw new UnauthorizedException('Only admin can delete vehicle type');
+      }
+
+      const vehicleType = await this.vehicleTypesRepository.findOne({
+        where: { id_type },
+      });
+
+      if (!vehicleType) {
+        throw new NotFoundException('Vehicle type not found');
+      }
+  
+      await this.vehicleTypesRepository.delete(id_type);
+  
+      return {
+        message: 'Vehicle type deleted successfully',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+  
+  
 }
