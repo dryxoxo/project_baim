@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { vehicle_brands } from '../vehicle-brands/entity/vehicle-brands.entity';
 import { vehicle_types } from '../vehicle-types/entity/vehicle-types.entity';
@@ -95,11 +99,11 @@ export class VehicleService {
     });
 
     const formattedPricelists = pricelists.map((pricelist) => ({
-        year: pricelist.id_year.year,
-        brandName: pricelist.id_model.id_type.id_brand.name,
-        modelName: pricelist.id_model.name,
-        typeName: pricelist.id_model.id_type.name,
-        price: pricelist.price,
+      year: pricelist.id_year.year,
+      brandName: pricelist.id_model.id_type.id_brand.name,
+      modelName: pricelist.id_model.name,
+      typeName: pricelist.id_model.id_type.name,
+      price: pricelist.price,
     }));
 
     const totalPages = Math.ceil(total / limit);
@@ -119,25 +123,92 @@ export class VehicleService {
     };
   }
 
-  async findOne(nameBrand: string): Promise<any> {
-    const brand = await this.vehicleBrandsRepository.findOne({ where: { name: nameBrand } });
-    if (!brand) {
-        return { message: 'Brand not found' };
-      }
+  async findOne(params: {
+    nameBrand?: string;
+    nameModel?: string;
+    nameType?: string;
+    years?: string;
+    price?: number;
+    page?: number;
+    limit?: number;
+  }): Promise<any> {
+    const { nameBrand, nameModel, nameType, years, price, page, limit } =
+      params;
 
-      const pricelists = await this.pricelistRepository.find({
-        relations: ['id_model', 'id_model.id_type', 'id_model.id_type.id_brand', 'id_year'],
-      });
 
-      const filteredPricelists = pricelists.filter(pricelist => pricelist.id_model.id_type.id_brand.name === nameBrand);
+    const pricelists = await this.pricelistRepository.find({
+      relations: [
+        'id_model',
+        'id_model.id_type',
+        'id_model.id_type.id_brand',
+        'id_year',
+      ],
+    });
 
-      return filteredPricelists.map(pricelist => ({
-        year: pricelist.id_year.year,
-        brandName: pricelist.id_model.id_type.id_brand.name,
-        modelName: pricelist.id_model.name,
-        typeName: pricelist.id_model.id_type.name,
-        price: pricelist.price,
-      }));
+    let filteredPricelists = pricelists;
 
+    if (nameBrand) {
+      filteredPricelists = filteredPricelists.filter(
+        (pricelist) => pricelist.id_model.id_type.id_brand.name === nameBrand,
+      );
+    }
+
+    if (nameModel) {
+      filteredPricelists = filteredPricelists.filter(
+        (pricelist) => pricelist.id_model.name === nameModel,
+      );
+    }
+
+    if (nameType) {
+      filteredPricelists = filteredPricelists.filter(
+        (pricelist) => pricelist.id_model.id_type.name === nameType,
+      );
+    }
+
+    if (years) {
+      const yearArray = years.split(',').map((year) => year.trim());
+      filteredPricelists = filteredPricelists.filter((pricelist) =>
+        yearArray.includes(pricelist.id_year.year),
+      );
+    }
+
+    if (price) {
+      filteredPricelists = filteredPricelists.filter(
+        (pricelist) => pricelist.price <= price,
+      );
+    }
+
+    if (filteredPricelists.length === 0) {
+      throw new NotFoundException('Data not found');
+    }
+
+    const total = filteredPricelists.length;
+    const totalPages = Math.ceil(total / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedPricelists = filteredPricelists.slice(startIndex, endIndex);
+
+    const formattedPricelists = paginatedPricelists.map((pricelist) => ({
+      year: pricelist.id_year.year,
+      brandName: pricelist.id_model.id_type.id_brand.name,
+      modelName: pricelist.id_model.name,
+      typeName: pricelist.id_model.id_type.name,
+      price: pricelist.price,
+    }));
+
+    const baseUrl = '/vehicle/search/';
+    const previous = page > 1 ? page - 1 : null;
+    const next = page < totalPages ? page + 1 : null;
+    const nextPageUrl = next ? `${baseUrl}?page=${next}` : null;
+    const previousPageUrl = previous ? `${baseUrl}?page=${previous}` : null;
+
+    return {
+      page,
+      limit,
+      total,
+      previous: previousPageUrl,
+      next: nextPageUrl,
+      data: formattedPricelists,
+    };
   }
 }

@@ -17,11 +17,23 @@ export class VehicleController {
         return this.vehicleService.findAll(page, limit);
     }
 
+    // @Get('search')
+    // async findAllBrands(
+    // @Query('brand') brand: string,
+    // ) {
+    //     return this.vehicleService.findOne(brand);
+    // }
+
     @Get('search')
-    async findAllBrands(
-    @Query('brand') brand: string,
-    ) {
-        return this.vehicleService.findOne(brand);
+    async search(
+        @Query() query: any
+    ): Promise<any> {
+        const { page = 1, limit = 10, ...otherParams } = query;
+        return this.vehicleService.findOne({
+            page,
+            limit,
+            ...otherParams,
+          });
     }
 
     @Post('create')
