@@ -113,13 +113,17 @@ export class VehicleService {
   
       const formattedPricelists = pricelists.map((pricelist) => ({
         year: pricelist.id_year.year,
-        brandName: pricelist.id_model.id_type.id_brand.name,
-        modelName: pricelist.id_model.name,
-        typeName: pricelist.id_model.id_type.name,
-        price: pricelist.price,
         idBrand: pricelist.id_model.id_type.id_brand.id_brand,
-        idType: pricelist.id_model.id_type.id_type,
-        idModel: pricelist.id_model.id_model,
+        brandName: pricelist.id_model.id_type.id_brand.name,
+        model: {
+          id_model: pricelist.id_model.id_model,
+          modelName: pricelist.id_model.name,
+          type: {
+            id_type: pricelist.id_model.id_type.id_type,
+            typeName: pricelist.id_model.id_type.name,
+            price: pricelist.price,
+          },
+        },
       }));
   
       const totalPages = Math.ceil(total / limit);
