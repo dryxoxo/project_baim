@@ -31,4 +31,25 @@ export class VehicleModelsService {
         @InjectRepository(pricelist)
         private pricelistRepository: Repository<pricelist>,
       ) {}
+      
+      async updateVehicleModel(id_model: string, name: string, req: Request): Promise<any> {
+        try {
+          if (req['user'].role !== true) {
+            throw new UnauthorizedException('Only admin can update vehicle model');
+          }
+          const vehicleModel = await this.vehicleModelsRepository.findOne({
+            where: { id_model },
+          });
+          if (!vehicleModel) {
+            throw new NotFoundException('Vehicle model not found');
+          }
+          vehicleModel.name = name;
+          await this.vehicleModelsRepository.save(vehicleModel);
+          return {
+            message: 'Vehicle model updated successfully',
+          };
+        } catch (error) {
+          throw new InternalServerErrorException(error.message);
+        }
+      }
 }
