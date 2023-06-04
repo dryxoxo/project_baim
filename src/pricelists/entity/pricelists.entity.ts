@@ -5,7 +5,7 @@ import { vehicle_models } from 'src/vehicle-models/entity/vehicle-models.entity'
 @Entity()
 export class pricelist extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id_price: string;
 
     @ManyToOne(() => vehicle_years)
     @JoinColumn({ name: 'id_year' })

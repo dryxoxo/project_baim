@@ -18,6 +18,6 @@ import { JwtMiddleware } from './middleware/JwtMiddleware.middleware';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JwtMiddleware).forRoutes('create-vehicle');
+    consumer.apply(JwtMiddleware).forRoutes('vehicle');
   }
 }
