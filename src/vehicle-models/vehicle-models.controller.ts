@@ -16,12 +16,19 @@ export class VehicleModelsController {
   constructor(private readonly vehicleModelsService: VehicleModelsService) {}
 
   @Patch('update/:id_model')
-  async update(
-    @Param('id_model') id_model: string,
-    @Body('nameModel') name: string,
+  updateVehicleModel(
+    @Param('id_model') id_model: 'string',
+    @Body() updateData: any,
     @Req() req: Request,
   ): Promise<any> {
-    return this.vehicleModelsService.updateVehicleModel(id_model, name, req);
+    const { nameModel, price, year } = updateData;
+    return this.vehicleModelsService.updateVehicleModel(
+      id_model,
+      nameModel,
+      price,
+      year,
+      req,
+    );
   }
 
   @Delete('delete/:id_model')
@@ -36,9 +43,16 @@ export class VehicleModelsController {
   async create(
     @Param('id_type') id_type: string,
     @Body('nameModel') name: string,
+    @Body('price') price: number,
+    @Body('year') year: string,
     @Req() req: Request,
   ): Promise<any> {
-    return this.vehicleModelsService.createVehicleModel(id_type, name, req);
+    return this.vehicleModelsService.createVehicleModel(
+      id_type,
+      name,
+      price,
+      year,
+      req,
+    );
   }
-  
 }

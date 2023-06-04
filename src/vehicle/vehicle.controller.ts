@@ -17,13 +17,6 @@ export class VehicleController {
         return this.vehicleService.findAll(page, limit);
     }
 
-    // @Get('search')
-    // async findAllBrands(
-    // @Query('brand') brand: string,
-    // ) {
-    //     return this.vehicleService.findOne(brand);
-    // }
-
     @Get('search')
     async search(
         @Query() query: any
