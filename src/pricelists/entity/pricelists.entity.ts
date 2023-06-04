@@ -7,14 +7,14 @@ export class pricelist extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id_price: string;
 
-    @ManyToOne(() => vehicle_years)
+    @ManyToOne(() => vehicle_years, { cascade: true, onDelete: 'CASCADE' })
     @JoinColumn({ name: 'id_year' })
     id_year: vehicle_years;
 
     @Column()
     price: number;
 
-    @ManyToOne(() => vehicle_models)
+    @ManyToOne(() => vehicle_models, { cascade: true, onDelete: 'CASCADE' })
     @JoinColumn({ name: 'id_model' })
     id_model: vehicle_models;
 

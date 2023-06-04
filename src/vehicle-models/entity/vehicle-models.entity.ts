@@ -9,7 +9,7 @@ export class vehicle_models extends BaseEntity {
     @Column()
     name: string;
 
-    @ManyToOne(() => vehicle_types)
+    @ManyToOne(() => vehicle_types, { cascade: true, onDelete: 'CASCADE' })
     @JoinColumn({ name: 'id_type' })
     id_type: vehicle_types;
 
