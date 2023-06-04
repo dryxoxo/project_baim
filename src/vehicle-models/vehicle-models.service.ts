@@ -73,7 +73,7 @@ export class VehicleModelsService {
         }
       }
 
-      async createVehicleModel(name: string, id_type: string, req: any): Promise<any> {
+      async createVehicleModel(id_type: string, name: string, req: any): Promise<any> {
         try {
           if (req['user'].role !== true) {
             throw new UnauthorizedException('Only admin can create vehicle model');

@@ -31,4 +31,14 @@ export class VehicleModelsController {
   ): Promise<any> {
     return this.vehicleModelsService.deleteVehicleModel(id_model, req);
   }
+
+  @Post('create/:id_type')
+  async create(
+    @Param('id_type') id_type: string,
+    @Body('nameModel') name: string,
+    @Req() req: Request,
+  ): Promise<any> {
+    return this.vehicleModelsService.createVehicleModel(id_type, name, req);
+  }
+  
 }
