@@ -1,9 +1,30 @@
-import { Controller } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Get,
+  Query,
+  Param,
+  Delete,
+} from '@nestjs/common';
+import { Request } from 'express';
 import { VehicleBrandsService } from './vehicle-brands.service';
 @Controller('vehicle-brands')
 export class VehicleBrandsController {
-    constructor(
-        private readonly vehicleBrandsService: VehicleBrandsService,
-    ) {}
+  constructor(private readonly vehicleBrandsService: VehicleBrandsService) {}
 
+  @Post('update/:id_brand')
+  async update(
+    @Param('id_brand') id_brand: string,
+    @Body('nameBrand') name: string,
+    @Req() req: Request,
+  ): Promise<any> {
+    return this.vehicleBrandsService.update(id_brand, name, req);
+  }
+
+  @Delete('delete/:id_brand')
+  async deleteBrand(@Param('id_brand') id_brand: string, @Req() req: any): Promise<any> {
+    return this.vehicleBrandsService.delete(id_brand, req);
+  }
 }
