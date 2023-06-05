@@ -53,13 +53,3 @@ $ npm run start:prod
 ## Dokumentasi
 
 Untuk melihat dokumentasi lebih lengkap, silahkan kunjungi [dokumentasi lengkap](https://documenter.getpostman.com/view/19404602/2s93sWAGEs)
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
