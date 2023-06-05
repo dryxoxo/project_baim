@@ -70,7 +70,20 @@ export class VehicleBrandsService {
       throw new NotFoundException('Brand not found');
     }
   
+    const modelIds = pricelists.map(pricelist => pricelist.id_model.id_model);
+    const typeIds = pricelists.map(pricelist => pricelist.id_model.id_type.id_type);
+  
+    // Menghapus pricelists
     await this.pricelistRepository.remove(pricelists);
+  
+    // Menghapus models berdasarkan modelIds
+    await this.vehicleModelsRepository.delete(modelIds);
+  
+    // Menghapus types berdasarkan typeIds
+    await this.vehicleTypesRepository.delete(typeIds);
+  
+    // Menghapus brand
+    await this.vehicleBrandsRepository.delete(id_brand);
   
     return {
       message: 'Brand and related entities deleted successfully',

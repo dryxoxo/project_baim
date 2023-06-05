@@ -3,7 +3,7 @@ import {
   UnauthorizedException,
   NotFoundException,
   ConflictException,
-  InternalServerErrorException
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { vehicle_brands } from '../vehicle-brands/entity/vehicle-brands.entity';
@@ -83,6 +83,7 @@ export class VehicleService {
       newPricelist.price = price;
       newPricelist.id_year = vehicleYear;
       newPricelist.id_model = vehicleModel;
+      await this.pricelistRepository.save(newPricelist);
 
       return { message: 'Success created' };
     } catch (error) {
@@ -99,7 +100,7 @@ export class VehicleService {
   async findAll(page: number, limit: number): Promise<any> {
     try {
       const skip = (page - 1) * limit;
-  
+
       const [pricelists, total] = await this.pricelistRepository.findAndCount({
         relations: [
           'id_model',
@@ -110,29 +111,35 @@ export class VehicleService {
         take: limit,
         skip: skip,
       });
-  
+
       const formattedPricelists = pricelists.map((pricelist) => ({
         year: pricelist.id_year.year,
         idBrand: pricelist.id_model.id_type.id_brand.id_brand,
         brandName: pricelist.id_model.id_type.id_brand.name,
+        createdAt: pricelist.created_at,
+        updatedAt: pricelist.updated_at,
         model: {
           id_model: pricelist.id_model.id_model,
           modelName: pricelist.id_model.name,
+          createdAt: pricelist.id_model.created_at,
+          updatedAt: pricelist.id_model.updated_at,
           type: {
             id_type: pricelist.id_model.id_type.id_type,
             typeName: pricelist.id_model.id_type.name,
             price: pricelist.price,
+            createdAt: pricelist.id_model.id_type.created_at,
+            updatedAt: pricelist.id_model.id_type.updated_at,
           },
         },
       }));
-  
+
       const totalPages = Math.ceil(total / limit);
       const baseUrl = '/vehicle';
       const previous = page > 1 ? page - 1 : null;
       const next = page < totalPages ? page + 1 : null;
       const nextPageUrl = next ? `${baseUrl}?page=${next}` : null;
       const previousPageUrl = previous ? `${baseUrl}?page=${previous}` : null;
-  
+
       return {
         page,
         limit,
@@ -145,7 +152,6 @@ export class VehicleService {
       throw new Error('Internal server error');
     }
   }
-  
 
   async findOne(params: {
     nameBrand?: string;
@@ -157,8 +163,16 @@ export class VehicleService {
     limit?: number;
   }): Promise<any> {
     try {
-      const { nameBrand, nameModel, nameType, years, price, page = 1, limit = 10 } = params;
-  
+      const {
+        nameBrand,
+        nameModel,
+        nameType,
+        years,
+        price,
+        page = 1,
+        limit = 10,
+      } = params;
+
       const pricelists = await this.pricelistRepository.find({
         relations: [
           'id_model',
@@ -167,50 +181,53 @@ export class VehicleService {
           'id_year',
         ],
       });
-  
+
       let filteredPricelists = pricelists;
-  
+
       if (nameBrand) {
         filteredPricelists = filteredPricelists.filter(
           (pricelist) => pricelist.id_model.id_type.id_brand.name === nameBrand,
         );
       }
-  
+
       if (nameModel) {
         filteredPricelists = filteredPricelists.filter(
           (pricelist) => pricelist.id_model.name === nameModel,
         );
       }
-  
+
       if (nameType) {
         filteredPricelists = filteredPricelists.filter(
           (pricelist) => pricelist.id_model.id_type.name === nameType,
         );
       }
-  
+
       if (years) {
         const yearArray = years.split(',').map((year) => year.trim());
         filteredPricelists = filteredPricelists.filter((pricelist) =>
           yearArray.includes(pricelist.id_year.year),
         );
       }
-  
+
       if (price) {
         filteredPricelists = filteredPricelists.filter(
           (pricelist) => pricelist.price <= price,
         );
       }
-  
+
       if (filteredPricelists.length === 0) {
         throw new NotFoundException('Data not found');
       }
-  
+
       const total = filteredPricelists.length;
       const totalPages = Math.ceil(total / limit);
       const startIndex = (page - 1) * limit;
       const endIndex = startIndex + limit;
-      const paginatedPricelists = filteredPricelists.slice(startIndex, endIndex);
-  
+      const paginatedPricelists = filteredPricelists.slice(
+        startIndex,
+        endIndex,
+      );
+
       const formattedPricelists = paginatedPricelists.map((pricelist) => ({
         year: pricelist.id_year.year,
         brandName: pricelist.id_model.id_type.id_brand.name,
@@ -221,13 +238,13 @@ export class VehicleService {
         idType: pricelist.id_model.id_type.id_type,
         idModel: pricelist.id_model.id_model,
       }));
-  
+
       const baseUrl = '/vehicle/search/';
       const previous = page > 1 ? page - 1 : null;
       const next = page < totalPages ? page + 1 : null;
       const nextPageUrl = next ? `${baseUrl}?page=${next}` : null;
       const previousPageUrl = previous ? `${baseUrl}?page=${previous}` : null;
-  
+
       return {
         page,
         limit,
@@ -240,5 +257,22 @@ export class VehicleService {
       throw new InternalServerErrorException('Cannot process the request');
     }
   }
-  
+
+  // async delete(id_brand: string, req: Request): Promise<any> {
+  //   try {
+  //     if (req['user'].role !== true) {
+  //       throw new UnauthorizedException('Only admin can deletes brands');
+  //     }
+  //     const brand = await this.vehicleBrandsRepository.findOne({
+  //       where: { id_brand },
+  //     });
+  //     if (!brand) {
+  //       throw new NotFoundException('Brand not found');
+  //     }
+  //     await this.vehicleBrandsRepository.delete({ id_brand });
+  //     return { message: 'Brand deleted' };
+  //   } catch (error) {
+  //     throw new InternalServerErrorException('Cannot process the request');
+  //   }
+  // }
 }

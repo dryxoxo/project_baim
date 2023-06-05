@@ -7,6 +7,7 @@ import {
   Query,
   Param,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { VehicleTypesService } from './vehicle-types.service';
@@ -24,7 +25,7 @@ export class VehicleTypesController {
     return this.vehicleTypesService.create(name, id_brand, req);
   }
 
-  @Post('update/:id_type')
+  @Patch('update/:id_type')
   async update(
     @Param('id_type') id_type: string,
     @Body('nameType') name: string,

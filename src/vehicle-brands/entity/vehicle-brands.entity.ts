@@ -7,7 +7,7 @@ export class vehicle_brands extends BaseEntity {
     id_brand: string;
 
     @OneToMany(() => vehicle_types, vehicleType => vehicleType.id_brand)
-    vehicleTypes: vehicle_types[];
+    id_types: vehicle_types[];
 
     @Column()
     name: string;
