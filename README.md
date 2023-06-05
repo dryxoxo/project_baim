@@ -24,7 +24,13 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Ini adalah proyel pertama dalam mengembangkan proyek menggunakan Nest.js dengan TypeScript dan database PostgreSQL. Proyek ini merupakan sebuah layanan backend yang dapat digunakan untuk melakukan registrasi dan login pengguna. Sistem ini telah terintegrasi dengan metode hashing untuk keamanan kata sandi pengguna, serta menggunakan JWT (JSON Web Tokens) untuk otentikasi.
+
+Salah satu fitur utama dari proyek ini adalah manajemen kendaraan (vehicle) yang mencakup informasi tentang tahun, jenis (type), model, dan harga. Anda dapat melakukan operasi CRUD (Create, Read, Update, Delete) terhadap entitas kendaraan ini. Namun, hanya admin yang memiliki hak akses untuk melakukan operasi tersebut.
+
+## ERD
+
+Database yang saya gunakan adalah postgresql, dengan menggunakan TypeORM. berikut adalah ERDnya ![image-erd](https://github.com/dryxoxo/project_baim/blob/main/assets/erd-seru.png)
 
 ## Installation
 
@@ -44,23 +50,9 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+## Dokumentasi
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Untuk melihat dokumentasi lebih lengkap, silahkan kunjungi [dokumentasi lengkap](https://documenter.getpostman.com/view/19404602/2s93sWAGEs)
 
 ## Stay in touch
 
