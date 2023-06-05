@@ -52,4 +52,4 @@ $ npm run start:prod
 ```
 ## Dokumentasi
 
-Untuk melihat dokumentasi lebih lengkap, silahkan kunjungi [dokumentasi lengkap](https://documenter.getpostman.com/view/19404602/2s93sWAGEs)
+Untuk melihat dokumentasi lebih lengkap, silahkan kunjungi [dokumentasi lengkap](https://documenter.getpostman.com/view/19404602/2s93sWAGEs), dan untuk link deployment ada di [sini](https://projectbaim-production.up.railway.app)
