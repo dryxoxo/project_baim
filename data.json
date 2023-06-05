@@ -1,0 +1,35 @@
+"data":
+    {
+        "year": "2020",
+        "idBrand": "5460e44a-7e97-4bac-8774-74042d5e5125",
+        "brandName": "Honda",
+        "model": {
+            "id_model": "id_1",
+            "modelName": "Model Kedua",
+            "type": [{
+                "id_type": "id_type_1",
+                "typeName": "SUV",
+                "price": 39800
+            },
+            {
+                "id_type": "id_type_2",
+                "typeName": "SUV",
+                "price": 39800
+            }],
+            "id_model": "id_model_2",
+            "modelName": "Model Kedua Update",
+            "type": {
+                "id_type": "id_type_model_2",
+                "typeName": "SUV",
+                "price": 39800
+            },
+            "id_model": "id_model_3",
+            "modelName": "Model Kedua Update",
+            "type": {
+                "id_type": "id_type_model_3",
+                "typeName": "SUV",
+                "price": 39800
+            }
+        }
+        
+    }
